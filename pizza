@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Kalab Pizza – Włoska restauracja online</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+/* ===== WŁOSKA PALATA KOLORÓW 🇮🇹 ===== */
+:root {
+    --red: #b30000;
+    --green: #1b8e3f;
+    --cream: #f7f3e9;
+    --dark: #1f1f1f;
+}
+
+/* ===== GLOBAL ===== */
+body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: var(--cream);
+    color: #222;
+    transition: 0.3s;
+}
+.dark { background: var(--dark); color: white; }
+
+/* HEADER */
+header {
+    background: linear-gradient(90deg, var(--green), white, var(--red));
+    padding: 50px 20px;
+    text-align: center;
+    font-size: 28px;
+}
+
+/* NAVIGATION */
+nav {
+    background: var(--red);
+    padding: 15px;
+    text-align: center;
+}
+nav a {
+    color: white;
+    margin: 0 20px;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+/* CARDS */
+.card, .menu-item {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px #00000025;
+}
+.dark .card, .dark .menu-item { background: #333; }
+
+/* BUTTONS */
+button {
+    background: var(--green);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 8px;
+}
+button:hover { background: #14672e; }
+
+/* GALLERY */
+.gallery img {
+    width: 30%;
+    margin: 1%;
+    border-radius: 10px;
+}
+
+/* DARK MODE BUTTON */
+.dark-btn {
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    background: black;
+    padding: 10px 20px;
+    border-radius: 6px;
+}
+</style>
+</head>
+<body>
+
+<button class="dark-btn" onclick="toggleDark()">🌙 Tryb ciemny</button>
+
+<header>
+    <h1>🍕 Kalab Pizza</h1>
+    <p>Najlepsza włoska pizza z pieca opalanego drewnem!</p>
+</header>
+
+<nav>
+    <a href="#menu">Menu</a>
+    <a href="#koszyk">Koszyk</a>
+    <a href="#promo">Promocje</a>
+    <a href="#galeria">Galeria</a>
+    <a href="#opinie">Opinie</a>
+    <a href="#rezerwacja">Rezerwacja</a>
+</nav>
+
+<!-- PROMOCJE -->
+<section id="promo">
+<h2>🔥 Promocje dnia</h2>
+<div class="card">
+    <h3>⏳ 20 minut – Druga pizza -50%</h3>
+    <p>Pozostało: <b id="timer">20:00</b></p>
+</div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+<h2>🍽 MENU – Wybierz pizzę</h2>
+
+<div class="menu-item">
+    <h3>Margherita – od 22 zł</h3>
+    <p>Włoski klasyk z bazylią.</p>
+
+    <label>Rozmiar:</label>
+    <select id="size1">
+        <option value="22">Mała – 22 zł</option>
+        <option value="28">Średnia – 28 zł</option>
+        <option value="34">Duża – 34 zł</option>
+    </select>
+
+    <p>Dodatki:</p>
+    <label><input type="checkbox" class="extra1" value="4"> Podwójny ser +4 zł</label><br>
+    <label><input type="checkbox" class="extra1" value="5"> Salami +5 zł</label><br>
+    <label><input type="checkbox" class="extra1" value="3"> Rukola +3 zł</label><br>
+
+    <button onclick="addPizza('Margherita', 'size1', 'extra1')">Dodaj</button>
+</div>
+
+<div class="menu-item">
+    <h3>Diavola – od 29 zł</h3>
+    <p>Pikantna pizza z chili.</p>
+
+    <label>Rozmiar:</label>
+    <select id="size2">
+        <option value="29">Mała – 29 zł</option>
+        <option value="36">Średnia – 36 zł</option>
+        <option value="42">Duża – 42 zł</option>
+    </select>
+
+    <p>Dodatki:</p>
+    <label><input type="checkbox" class="extra2" value="4"> Papryczki chili +4 zł</label><br>
+    <label><input type="checkbox" class="extra2" value="6"> Salami pikantne +6 zł</label><br>
+
+    <button onclick="addPizza('Diavola', 'size2', 'extra2')">Dodaj</button>
+</div>
+
+</section>
+
+<!-- KOSZYK -->
+<section id="koszyk">
+<h2>🛒 Koszyk</h2>
+
+<div class="card">
+    <h3>Twoje zamówienie:</h3>
+    <div id="cart"></div>
+
+    <p><b>Suma:</b> <span id="total">0</span> zł</p>
+
+    <h3>Dostawa:</h3>
+    <select id="delivery" onchange="updateDelivery()">
+        <option value="0">Odbiór osobisty – 0 zł</option>
+        <option value="8">Dostawa – 8 zł</option>
+        <option value="12">Dostawa ekspresowa – 12 zł</option>
+    </select>
+
+    <p>Koszt dostawy: <b><span id="deliveryCost">0</span> zł</b></p>
+
+    <h3>Kod rabatowy:</h3>
+    <input id="kupon" placeholder="np. ITALIA10">
+    <button onclick="applyDiscount()">Zastosuj</button>
+</div>
+</section>
+
+<!-- GALERIA -->
+<section id="galeria">
+<h2>📸 Zdjęcia restauracji</h2>
+<div class="gallery">
+    <img src="https://images.unsplash.com/photo-1594007654729-407eedc4be3f">
+    <img src="https://images.unsplash.com/photo-1601924572785-d318c6b471aa">
+    <img src="https://images.unsplash.com/photo-1550317138-10000687a72b">
+</div>
+</section>
+
+<!-- OPINIE -->
+<section id="opinie">
+<h2>⭐ Opinie klientów</h2>
+
+<div class="card">
+    <h3>Dodaj opinię</h3>
+
+    <label>Ocena:</label><br>
+    <select id="stars">
+        <option value="1">⭐</option>
+        <option value="2">⭐⭐</option>
+        <option value="3">⭐⭐⭐</option>
+        <option value="4">⭐⭐⭐⭐</option>
+        <option value="5" selected>⭐⭐⭐⭐⭐</option>
+    </select><br><br>
+
+    <input id="opinia" placeholder="Napisz opinię...">
+    <button onclick="addReview()">Dodaj</button>
+</div>
+
+<div id="reviewList"></div>
+</section>
+
+<!-- REZERWACJA -->
+<section id="rezerwacja">
+<h2>📅 Rezerwacja stolika</h2>
+
+<div class="card">
+    <label>Liczba osób:</label>
+    <input id="osoby" type="number" value="2" min="1" max="12"><br><br>
+
+    <label>Godzina:</label>
+    <input id="godzina" type="time"><br><br>
+
+    <button onclick="rezerwuj()">Rezerwuj</button>
+
+    <p id="rezMsg"></p>
+</div>
+</section>
+
+<footer>
+    © 2025 Kalab Pizza – Autentyczny włoski smak 🇮🇹
+</footer>
+
+<script>
+/* ===========================
+    PROMOCJA – TIMER 20 MIN
+=========================== */
+let time = 20 * 60;
+setInterval(() => {
+    let m = Math.floor(time / 60);
+    let s = time % 60;
+    document.getElementById("timer").innerText =
+        `${m}:${s < 10 ? "0" + s : s}`;
+    if (time > 0) time--;
+}, 1000);
+
+/* ===========================
+        KOSZYK
+=========================== */
+let cart = [];
+let deliveryCost = 0;
+let total = 0;
+
+function addPizza(name, sizeId, extraClass) {
+    const size = parseInt(document.getElementById(sizeId).value);
+    const extras = [...document.getElementsByClassName(extraClass)]
+        .filter(x => x.checked)
+        .map(x => parseInt(x.value));
+
+    let price = size + extras.reduce((a, b) => a + b, 0);
+
+    cart.push({ name, price });
+    updateCart();
+}
+
+function updateCart() {
+    total = cart.reduce((a, b) => a + b.price, 0);
+
+    let html = "";
+    cart.forEach((p, i) => {
+        html += `<p>${p.name} – ${p.price} zł 
+            <button onclick="removeItem(${i})">Usuń</button></p>`;
+    });
+
+    document.getElementById("cart").innerHTML = html;
+    document.getElementById("total").innerText = total + deliveryCost;
+}
+
+function removeItem(i) {
+    cart.splice(i, 1);
+    updateCart();
+}
+
+function updateDelivery() {
+    deliveryCost = parseInt(document.getElementById("delivery").value);
+    document.getElementById("deliveryCost").innerText = deliveryCost;
+    updateCart();
+}
+
+function applyDiscount() {
+    if (document.getElementById("kupon").value === "ITALIA10") {
+        total *= 0.9;
+        alert("Rabat 10% został naliczony!");
+        updateCart();
+    } else {
+        alert("Zły kod!");
+    }
+}
+
+/* ===========================
+        OPINIE
+=========================== */
+function addReview() {
+    const star = document.getElementById("stars").value;
+    const opinia = document.getElementById("opinia").value;
+
+    if (!opinia) return alert("Napisz coś!");
+
+    document.getElementById("reviewList").innerHTML +=
+        `<div class="card"><p>${"⭐".repeat(star)} – ${opinia}</p></div>`;
+
+    document.getElementById("opinia").value = "";
+}
+
+/* ===========================
+        REZERWACJA
+=========================== */
+function rezerwuj() {
+    let osoby = document.getElementById("osoby").value;
+    let godz = document.getElementById("godzina").value;
+
+    if (!godz) return alert("Wybierz godzinę!");
+
+    document.getElementById("rezMsg").innerText =
+        `Zarezerwowano stolik dla ${osoby} osób na godzinę ${godz}!`;
+}
+
+/* ===========================
+        TRYB CIEMNY
+=========================== */
+function toggleDark() {
+    document.body.classList.toggle("dark");
+}
+</script>
+</body>
+</html>
+
+
+
+
+ 
